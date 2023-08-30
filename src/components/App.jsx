@@ -38,7 +38,7 @@ class App extends Component {
 	};
 
 	render() {
-		const { isModalShow, searchItem, page, isNewSearch, bigImgShow } = this.state;
+		const { isModalShow, searchItem, isNewSearch, bigImgShow } = this.state;
 		return (
 			<div className='container'>
 				{isModalShow && (
@@ -49,7 +49,6 @@ class App extends Component {
 				<Searchbar handlerSearch={this.handlerChangeSearchValue} />
 				<ImageGallery
 					searchItem={searchItem}
-					pageStart={page}
 					isNewSearch={isNewSearch}
 					onClickBigImage={this.handleClick}
 					onSearchCompeted={this.handlerSearchComplete}
