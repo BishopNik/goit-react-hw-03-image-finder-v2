@@ -8,7 +8,7 @@ import { fetchImage } from '../service/fetch_api';
 import ImageItem from '../galleryitem';
 import Button from '../button';
 import Loader from '../loader';
-import { ErrorComponent } from 'components/service/error';
+import { ErrorComponent } from '../service/error';
 import './style.css';
 
 class ImageGallery extends Component {
@@ -37,7 +37,7 @@ class ImageGallery extends Component {
 		if (
 			prevProps.searchItem !== searchItem ||
 			(prevProps.isNewSearch !== isNewSearch && isNewSearch === true) ||
-			prevState.page !== page
+			(prevState.page !== page && page !== 1)
 		) {
 			this.setState({
 				statusComponent: 'pending',
@@ -49,11 +49,12 @@ class ImageGallery extends Component {
 
 			fetchImage({
 				searchItem,
-				page,
+				page: isNewSearch ? 1 : page,
 				perPage,
 			})
 				.then(({ hits, totalHits }) => {
 					const foundImages = [];
+					console.log('RUN', hits);
 					hits.forEach(({ id, webformatURL, largeImageURL, tags }) => {
 						if (id && webformatURL && largeImageURL && tags) {
 							foundImages.push({ id, webformatURL, largeImageURL, tags });
@@ -61,7 +62,6 @@ class ImageGallery extends Component {
 					});
 					const pages = isNewSearch ? Math.ceil(totalHits / perPage) : countPage;
 					this.setState(prevState => ({
-						...prevState,
 						foundImages: isNewSearch
 							? [...foundImages]
 							: [...prevState.foundImages, ...foundImages],
