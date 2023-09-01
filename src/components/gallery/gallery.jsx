@@ -46,6 +46,7 @@ class ImageGallery extends Component {
 				foundImages: isNewSearch ? [] : this.state.foundImages,
 				countPage: isNewSearch ? 0 : this.state.countPage,
 			});
+
 			fetchImage({
 				searchItem,
 				page,
