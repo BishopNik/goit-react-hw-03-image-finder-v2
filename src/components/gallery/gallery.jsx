@@ -19,7 +19,6 @@ class ImageGallery extends Component {
 		foundImages: [],
 		countFoundItem: 0,
 		countPage: 0,
-		isLoading: false,
 		statusComponent: null,
 		error: null,
 	};
@@ -54,7 +53,6 @@ class ImageGallery extends Component {
 			})
 				.then(({ hits, totalHits }) => {
 					const foundImages = [];
-					console.log('RUN', hits);
 					hits.forEach(({ id, webformatURL, largeImageURL, tags }) => {
 						if (id && webformatURL && largeImageURL && tags) {
 							foundImages.push({ id, webformatURL, largeImageURL, tags });

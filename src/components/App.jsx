@@ -11,7 +11,6 @@ import './style.css';
 class App extends Component {
 	state = {
 		searchItem: '',
-		page: 1,
 		isModalShow: false,
 		isNewSearch: false,
 		bigImgShow: '',
