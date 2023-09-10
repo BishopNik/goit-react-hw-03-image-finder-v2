@@ -97,6 +97,7 @@ class ImageGallery extends Component {
 
 	render() {
 		const { page, countPage, searchItem, statusComponent, foundImages, error } = this.state;
+
 		if (statusComponent !== 'rejected') {
 			return (
 				<>
