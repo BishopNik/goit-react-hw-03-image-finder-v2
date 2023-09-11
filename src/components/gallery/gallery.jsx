@@ -8,7 +8,7 @@ import { fetchImage } from '../service/fetch_api';
 import ImageItem from '../galleryitem';
 import Button from '../button';
 import Loader from '../loader';
-import { ErrorComponent } from '../service/error';
+import ErrorComponent from '../service/error';
 import './style.css';
 
 class ImageGallery extends Component {
