@@ -3,6 +3,7 @@
 import { Component } from 'react';
 import { BsFillCaretDownSquareFill } from 'react-icons/bs';
 import { Notify } from 'notiflix';
+import { nanoid } from 'nanoid';
 import Gallery from './gallery';
 import Searchbar from './searchbar';
 import Modal from './modal';
@@ -17,7 +18,7 @@ class App extends Component {
 	state = {
 		searchItem: '',
 		isModalShow: false,
-		isNewSearch: false,
+		isSearch: null,
 		bigImgShow: '',
 		page: 1,
 		perPage: 12,
@@ -29,23 +30,19 @@ class App extends Component {
 	};
 
 	componentDidUpdate = (prevProps, prevState) => {
-		const { perPage, countPage, page, searchItem, isNewSearch } = this.state;
+		const { perPage, page, searchItem, isNewSearch, isSearch } = this.state;
 		if (
 			prevState.searchItem !== searchItem ||
-			(prevState.isNewSearch !== isNewSearch && isNewSearch === true) ||
-			(prevState.page !== page && page !== 1)
+			(prevState.page !== page && page !== 1) ||
+			prevState.isSearch !== isSearch
 		) {
 			this.setState({
 				statusComponent: 'pending',
-				searchItem,
-				page: isNewSearch ? 1 : page,
-				foundImages: isNewSearch ? [] : this.state.foundImages,
-				countPage: isNewSearch ? 0 : this.state.countPage,
 			});
 
 			fetchImage({
 				searchItem,
-				page: isNewSearch ? 1 : page,
+				page,
 				perPage,
 			})
 				.then(({ hits, totalHits }) => {
@@ -55,7 +52,7 @@ class App extends Component {
 							foundImages.push({ id, webformatURL, largeImageURL, tags });
 						}
 					});
-					const pages = isNewSearch ? Math.ceil(totalHits / perPage) : countPage;
+					const pages = Math.ceil(totalHits / perPage);
 					this.setState(prevState => ({
 						foundImages: isNewSearch
 							? [...foundImages]
@@ -71,8 +68,7 @@ class App extends Component {
 						error: message,
 					});
 					Notify.failure('Unable to load results. ' + message);
-				})
-				.finally(this.handlerSearchComplete());
+				});
 		}
 	};
 
@@ -88,11 +84,13 @@ class App extends Component {
 	};
 
 	handlerChangeSearchValue = value => {
-		this.setState({ searchItem: value, isNewSearch: true });
-	};
-
-	handlerSearchComplete = value => {
-		this.setState({ isNewSearch: false });
+		this.setState({
+			searchItem: value,
+			page: 1,
+			foundImages: [],
+			countPage: 0,
+			isSearch: nanoid(),
+		});
 	};
 
 	handleClick = bigImageSrc => {
@@ -172,47 +170,3 @@ class App extends Component {
 }
 
 export default App;
-
-// if (statusComponent !== 'rejected') {
-// 	return (
-// 		<>
-// 			<ul className='gallery-container'>
-// 				{foundImages.length > 0
-// 					? foundImages.map(item => (
-// 							<ImageItem
-// 								key={item.id}
-// 								srcUrl={item.webformatURL}
-// 								dataset={item.largeImageURL}
-// 								tags={item.tags}
-// 								onClick={this.handleClick}
-// 							/>
-// 					  ))
-// 					: searchItem !== '' &&
-// 					  foundImages.length === 0 &&
-// 					  statusComponent === 'resolved' && (
-// 							<ErrorComponent>
-// 								Images <span className='search-item'>{searchItem}</span> not
-// 								found
-// 							</ErrorComponent>
-// 					  )}
-// 			</ul>
-// 			{page > 0 && countPage > 0 && foundImages.length > 0 && (
-// 				<div className='status-container'>
-// 					<div className='page-stat'>
-// 						<div className='page-count'>images: {foundImages.length}</div>
-// 					</div>
-// 					{countPage > page && (
-// 						<Button
-// 							className={'loadmore'}
-// 							type={'button'}
-// 							onClick={() => this.changePage(1)}
-// 						>
-// 							<BsFillCaretDownSquareFill />
-// 						</Button>
-// 					)}
-// 				</div>
-// 			)}
-// 			{statusComponent === 'pending' ? <Loader /> : null};
-// 		</>
-// 	);
-// }
